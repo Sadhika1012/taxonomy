@@ -1,2 +1,2 @@
 # taxonomy
-Taxonomy for instruct lab 
+custom taxonomy for instruct lab 

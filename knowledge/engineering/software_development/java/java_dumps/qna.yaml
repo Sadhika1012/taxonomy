@@ -1,0 +1,217 @@
+created_by: sadhika
+version: 3
+domain: software_development
+document_outline: >-
+  This document provides detailed information on the JVM (Java Virtual Machine),
+  JRE (Java Runtime Environment), JIT compilation threads, GC worker threads, and
+  threads causing deadlocks.
+seed_examples:
+  - context: >-
+      The threads section contains a list of execution threads in the Java Virtual Machine.
+      They may be in running, waiting, or blocked states. They contain state information
+      of the application thread, such as call stack, CPU consumption, execution priority,
+      and thread group to which it belongs.
+    questions_and_answers:
+      - question: What are the attributes of threads?
+        answer: |
+          - Name
+          - State
+          - Running Priority
+          - Java Call Stack
+          - Native Call Stack
+          - Thread ID
+          - CPU Consumption
+          - Thread Category
+          - Waiting Status
+      - question: What are the types of threads available?
+        answer: |
+          - JIT Compilation Threads
+          - GC Worker Threads
+          - Application Threads
+          - System-JVM Threads
+      - question: What is the application category of threads?
+        answer: |
+          - These threads execute the Java application code.
+      - question: What is the JIT category of threads?
+        answer: |
+          - JIT (Just-In-Time) threads natively compile Java bytecode asynchronously to improve performance.
+      - question: What are System-JVM threads?
+        answer: |
+          - Internal housekeeping threads of the Java Virtual Machine.
+      - question: What are GC threads?
+        answer: |
+          - GC (Garbage Collection) threads manage memory by performing concurrent garbage collection.
+      - question: How many threads exist in this document?
+        answer: |
+          - There are **122** total threads in this dump.
+      - question: What do we mean by the state of a thread?
+        answer: |
+          - The state of a thread represents its execution status:
+          - **R (Running)** Actively executing
+          - **B (Blocked)** Waiting for a resource
+          - **CW (Conditional Wait)**  Waiting for an event or condition
+      - question: What is the thread waiting status?
+        answer: |
+          - A thread could be:
+          - **Waiting on a condition** (e.g., CW state)
+          - **Blocked on an object** (e.g., B state, waiting for a lock)
+      - question: How do threads get blocked?
+        answer: |
+          - A thread can get blocked if it needs synchronized access to an object that is currently held by another thread.
+      - question: What is a daemon thread?
+        answer: |
+          - A daemon thread is a background thread that performs low-priority tasks and usually runs indefinitely.
+      - question: Is this thread a daemon thread?
+        answer: |
+          - Yes, many threads, such as JIT Compilation Threads and ForkJoinPool Workers, are daemon threads.
+      - question: What is the CPU consumption of JIT threads?
+        answer: |
+          - The CPU consumption of JIT threads ranges between **0.000007000** and **0.018659000**.
+      - question: Which threads are exceeding 10% CPU consumption?
+        answer: |
+          - The **JIT Compilation Thread-000** has the highest CPU usage at **0.193058440 (19.3%)**.
+      - question: Which thread runs with the highest priority?
+        answer: |
+          - **JIT Compilation Threads** have the highest priority:
+          - Java Priority: **10**
+          - Native Priority: **0xB**
+      - question: Is the thread currently compiling code?
+        answer: |
+          - No, some of the JIT Compilation Threads are in **CW (Conditional Wait) state**, meaning they are **idle and waiting for compilation work**.
+      - question: What is the "Blocked On" field used for?
+        answer: |
+          - It indicates **which object or thread a thread is waiting for** before it can proceed.
+      - question: Is this thread waiting for a lock?
+        answer: |
+          - Yes, some threads, like **Thread-6**, are waiting for a lock on an object owned by another thread.
+      - question: Which threads are involved in a deadlock?
+        answer: |
+          -  Most of the application threads except for **Thread-4** are in deadlock.
+      - question: What is the state of each thread involved in a deadlock?
+        answer: |
+          - The deadlocked threads are in **Blocked (B) state**.
+      - question: What objects are causing thread blocking?
+        answer: |
+          - The java/lang/Object@0x00000000FFE0D4A0 object is causing thread blocking.
+      - question: Why are some of the JIT threads using low CPU?
+        answer: |
+          - The JIT threads are in **CW (Conditional Wait) state**, meaning they are **idle and waiting for compilation work**.
+      - question: Why is the JIT-SamplerThread using high CPU?
+        answer: |
+          - The **JIT-SamplerThread** is consuming high CPU because it is actively performing **profiling tasks**.
+      - question: Why is the GC thread using such low CPU?
+        answer: |
+          - The **GC Worker Threads** have low CPU usage because they **only activate when garbage collection is required**.
+      - question: What is a thread stack?
+        answer: |
+          - The thread stack is **the memory area where a thread stores its local variables and execution context**.
+      - question: What is a thread stack range?
+        answer: |
+          - The stack range represents **the lower and upper memory bounds allocated for a thread's execution stack**.
+      - question: What is a Java call stack?
+        answer: |
+          - The **Java call stack** contains the method calls executed within the application.
+      - question: What is a thread's native call stack?
+        answer: |
+          - The **native call stack** consists of the **low-level native (JNI) methods executed by the JVM**.
+      - question: Can you detect thread starvation?
+        answer: |
+          - **Thread starvation occurs** when the number of active threads **exceeds CPU availability**, causing some threads to wait indefinitely.
+      - question: How do we detect slow-moving thread patterns?
+        answer: |
+          - If **more than half** of the threads are blocked on a **single object**, this is an indication of slow-moving threads.
+      - question: Which thread attributes are transient?
+        answer: |
+          - **All attributes except for Name and Category** are transient and may change over time.
+  - context: >-
+      **Java Memory Management** ensures efficient allocation and deallocation of memory
+      for Java applications. The JVM automatically manages memory using the heap, stack,
+      and garbage collection mechanisms.
+    questions_and_answers:
+      - question: What are the main memory areas in Java?
+        answer: |
+          Java has several memory areas:
+          - **Heap Memory** Stores objects and class instances.
+          - **Stack Memory** Stores method execution details and local variables.
+          - **Metaspace** Stores class metadata and compiled bytecode.
+          - **PC Register** Tracks the current instruction being executed.
+          - **Native Method Stack** Used for native (non-Java) method execution.
+      - question: How does garbage collection work in Java?
+        answer: |
+          - The **Garbage Collector (GC)** automatically removes unused objects from memory.
+          - It follows algorithms like **Mark-and-Sweep**, **Generational GC**, and **G1 GC**.
+          - GC helps prevent **memory leaks** by reclaiming objects no longer in use.
+      - question: How can we optimize Java memory usage?
+        answer: |
+          - Use **proper object references** to avoid memory leaks.
+          - Choose the appropriate **garbage collection strategy**.
+          - Optimize **heap size (`-Xms` and `-Xmx`)** to balance performance and memory.
+          - Use **profiling tools** like JVisualVM and JConsole to monitor memory usage.
+  - context: >-
+      **JVM Class Loading** is the process of dynamically loading Java classes into memory
+      during runtime. The JVM follows a delegation model for class loading using different
+      class loaders.
+    questions_and_answers:
+      - question: What are the types of class loaders in JVM?
+        answer: |
+          The JVM has the following class loaders:
+          - **Bootstrap ClassLoader** Loads core Java classes (`java.lang.*`).
+          - **Extension ClassLoader** Loads classes from `lib/ext` directories.
+          - **Application ClassLoader** Loads application classes from the classpath.
+          - **Custom ClassLoader** User-defined loaders for special use cases.
+      - question: How does the JVM load classes?
+        answer: |
+          - The JVM follows a **parent-first delegation model**, meaning:
+            - A class loader first asks its **parent loader** if it can load the class.
+            - If the parent **cannot load the class**, the current loader tries.
+          - Classes are loaded **only once per classloader instance**.
+      - question: What are common issues with class loading?
+        answer: |
+          - **ClassNotFoundException** Class cannot be found in the classpath.
+          - **NoClassDefFoundError** Class was compiled but missing at runtime.
+          - **ClassCastException** Occurs due to different class loaders loading the same class.
+  - context: >-
+      **JIT Compilation** improves Java performance by dynamically compiling bytecode
+      into native machine code at runtime. This reduces interpretation overhead and speeds
+      up execution.
+    questions_and_answers:
+      - question: What is Just-In-Time (JIT) compilation?
+        answer: |
+          - JIT converts Java bytecode into **native machine code** at runtime.
+          - It improves performance compared to purely interpreted execution.
+          - The compiled code is **cached**, reducing repetitive compilation overhead.
+      - question: What are the types of JIT optimizations?
+        answer: |
+          - **Method Inlining**  Replaces method calls with the method body to avoid call overhead.
+          - **Loop Unrolling** Expands loops to reduce iteration overhead.
+          - **Dead Code Elimination**  Removes unused code to optimize execution.
+          - **Adaptive Optimization**  Adjusts optimizations dynamically based on runtime behavior.
+      - question: How can we monitor JIT compilation?
+        answer: |
+          - Use the JVM flag `-XX:+PrintCompilation` to see JIT-compiled methods.
+          - Enable `-XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation` for detailed logs.
+          - Profiling tools like **JITWatch** help analyze compiled code.
+  - context: >-
+      The **Java Virtual Machine (JVM)** is the engine that runs Java programs.
+      It converts Java bytecode into machine code that the computer can execute.
+      The JVM provides platform independence, memory management, and security.
+    questions_and_answers:
+      - question: What does the JVM do?
+        answer: |
+          - The JVM **interprets** and **executes** Java bytecode.
+          - It provides **automatic memory management** and garbage collection.
+          - It ensures Java programs run **independently of the operating system**.
+      - question: Why is Java called a platform-independent language?
+        answer: |
+          - Java programs run on the **JVM**, which translates bytecode to native machine code.
+          - This allows Java applications to run on **Windows, Linux, macOS, and more** without modification.
+      - question: What are the main components of the JVM?
+        answer: |
+          - **Class Loader**  Loads Java classes into memory.
+          - **Runtime Memory Areas** Stores objects, methods, and variables.
+          - **Execution Engine**  Runs bytecode using an **interpreter** or **JIT compiler**.
+document:
+  repo: 'https://github.com/Sadhika1012/instructlab_knowledge.git'
+  commit: 86a6a0bec9b63d0e94eb42448c70727d23b417cd
+  patterns:
+    - java_dumps/test.md
